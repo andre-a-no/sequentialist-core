@@ -8,6 +8,8 @@
   `@sequentialist/ab-client` and the test vectors) and
   [sequentialist-quality](https://github.com/andre-a-no/sequentialist-quality).
   The code of sequentialist-core is unchanged.
+- Contributions of code are not accepted, and the draft Contributor License
+  Agreement is withdrawn.
 
 ## sequentialist-core 0.1.0 — unreleased
 

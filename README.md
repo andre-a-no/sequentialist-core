@@ -93,7 +93,7 @@ by other means (Postgres storage is planned).
 ## License
 
 GNU AGPL v3 or a commercial license ([COMMERCIAL.md](COMMERCIAL.md)).
-Contributions need the [Contributor License Agreement](CLA.md); see
+Contributions of code are not accepted; issues are welcome. See
 [CONTRIBUTING.md](CONTRIBUTING.md).
 
 Contact: andrei@hobukob.ru, a.hobukob@gmail.com.
