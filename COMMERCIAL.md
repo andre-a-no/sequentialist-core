@@ -48,8 +48,8 @@ Please describe your product and how you intend to use the libraries.
 
 ## Contributions
 
-Contributions of code are not accepted, so that the code can continue to be
-offered under both licenses; reports of bugs and suggestions are welcome. See
+Contributions are accepted under a [Contributor License Agreement](CLA.md),
+so that the project can continue to be offered under both licenses. See
 [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ---
@@ -85,7 +85,5 @@ Laboratories LLC; ОГРН 1231600027548, ИНН 1685011563).
 Контакты: andrei@hobukob.ru, a.hobukob@gmail.com. Опишите, пожалуйста, ваш
 продукт и то, как вы собираетесь использовать библиотеки.
 
-Чужой код в проект не принимается, чтобы его можно было и дальше
-предлагать по обеим лицензиям; сообщения об ошибках и предложения
-приветствуются.
+Вклад в проект принимается по [лицензионному соглашению участника](CLA.md).
 Краткое изложение выше не заменяет текст лицензии AGPL v3.

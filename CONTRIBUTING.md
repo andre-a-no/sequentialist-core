@@ -2,15 +2,19 @@
 
 Thank you for your interest in sequentialist.
 
-## Contributions of code are not accepted
+## Contributor License Agreement
 
 sequentialist is offered under the GNU AGPL v3 and under commercial licenses
-(see [COMMERCIAL.md](COMMERCIAL.md)). Offering code under both is possible
-only while one copyright holder owns all of it, so pull requests with code
-or documentation from others are not merged.
+(see [COMMERCIAL.md](COMMERCIAL.md)). To keep that possible, Novikov
+Laboratories LLC must hold the rights needed to license every part of the
+code under both. A contribution can therefore be merged only after its
+author has signed the Contributor License Agreement ([CLA.md](CLA.md),
+Russian and English; a draft until it has been reviewed by a lawyer), sent
+to andrei@hobukob.ru. Small fixes of typos in documentation are welcome
+without it.
 
-Reports of bugs, questions and suggestions are welcome as issues, and by
-e-mail to andrei@hobukob.ru.
+If you write code as part of your job, your employer may own it; in that
+case the employer has to sign the CLA as well.
 
 ## Development
 
