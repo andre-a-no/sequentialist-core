@@ -23,6 +23,7 @@
 | sequentialist-markets | `sequentialist-markets` | `sequentialist.markets` |
 | sequentialist-clinical | `sequentialist-clinical` | `sequentialist.clinical` |
 | — (позже) | `sequentialist-release`, `sequentialist-mlops` | |
+| sequentialist-messengers-api (будет заведён) | `sequentialist-messengers-api` | мессенджеры: исходящие сообщения и подтверждения от привязанных людей |
 
 Пока sequentialist-core нет на PyPI, прикладные пакеты ставят его из git:
 по коммиту `27f71847ea39cedf0a8e41a5f05042428a533443` (подкаталог
@@ -105,3 +106,17 @@
    (все пакеты с командами).
 3. Средняя длина серии с интервалом Монте-Карло в `simulate` (monitor,
    quality, ab, clinical).
+
+## Предложено к core (не принято владельцем)
+
+4. Интерфейс канала сообщений людям и его заглушка в памяти. Нужен почти
+   всем прикладным пакетам (тревоги, вопросы, подтверждения); реализации
+   мессенджеров — в отдельном пакете sequentialist-messengers-api, чтобы
+   их зависимости и протоколы не попадали в core и прикладные пакеты.
+   Интерфейс, например: `Channel.send(to, Message) -> message_id`
+   (`Message`: текст, приоритет, ссылка, кнопки с одноразовыми
+   токенами); `Channel.poll() -> list[Reply]` (`Reply`: канал, id
+   аккаунта на платформе, на какое сообщение, действие, токен, время);
+   подтверждение привязки аккаунта одноразовым кодом. Кто за аккаунтом
+   стоит и что ему можно — решает прикладной пакет. Подробности — в
+   CLAUDE.md sequentialist-monitor, раздел «Нормы эксперта», «Каналы».
