@@ -2,19 +2,21 @@
 
 ## Unreleased
 
+- The Contributor License Agreement names no court that hears disputes.
+- `publish.yml` publishes releases on PyPI by trusted publishing; it can also
+  be run by hand for an existing tag.
+
+## sequentialist-core 0.1.0 — 2026-10-28
+
+First version, on sequential-analysis 0.4; tag `v0.1.0`. The code is the same
+as at commit 27f7184 (in `packages/core` there), which the other libraries
+pinned before the release.
+
 - The repository holds sequentialist-core only, at its root. The other
   libraries moved, with their history, to their own repositories:
   [sequentialist-ab](https://github.com/andre-a-no/sequentialist-ab) (with
   `@sequentialist/ab-client` and the test vectors) and
   [sequentialist-quality](https://github.com/andre-a-no/sequentialist-quality).
-  The code of sequentialist-core is unchanged.
-
-## sequentialist-core 0.1.0 — unreleased
-
-First version, on sequential-analysis 0.4. Version 0.1.0 is the code at
-commit 27f7184 (in `packages/core` there), which the other libraries pin
-until it is on PyPI.
-
 - Specs with declarative schemas, every error at once with its JSON pointer,
   normal forms, spec ids, JSON Schema; JSON, and YAML with PyYAML.
 - The engine: tasks of several sequential-analysis runs; idempotent intake by
