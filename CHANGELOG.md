@@ -8,6 +8,9 @@
   `@sequentialist/ab-client` and the test vectors) and
   [sequentialist-quality](https://github.com/andre-a-no/sequentialist-quality).
   The code of sequentialist-core is unchanged.
+- `publish.yml`: a tag v<version> publishes to TestPyPI (pre-releases) or
+  PyPI by trusted publishing, after checking that the tag is the version and
+  that the tests pass on the built wheel.
 
 ## sequentialist-core 0.1.0 — unreleased
 
