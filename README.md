@@ -11,7 +11,7 @@ behind it states it.
 
 | Library | Repository | Status |
 |---|---|---|
-| `sequentialist-core` | this one | 0.1.0: specs, the checkpointed engine, storage, audit log, reports, simulations |
+| `sequentialist-core` | this one | 0.1.2: specs, the checkpointed engine, storage, audit log, reports, simulations |
 | `sequentialist-ab`, `@sequentialist/ab-client` (npm) | [sequentialist-ab](https://github.com/andre-a-no/sequentialist-ab) | 0.1.0: the engine of an A/B testing platform |
 | `sequentialist-quality` | [sequentialist-quality](https://github.com/andre-a-no/sequentialist-quality) | 0.1.0: sequential acceptance sampling of lots |
 | `sequentialist-monitor` | [sequentialist-monitor](https://github.com/andre-a-no/sequentialist-monitor) | planned: equipment, processes and energy |
