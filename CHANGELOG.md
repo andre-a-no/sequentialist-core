@@ -1,6 +1,9 @@
 # Changelog
 
-## Unreleased
+## sequentialist-core 0.1.2 — 2026-10-29
+
+The first version published on PyPI. The code of the package is that of
+0.1.0; 0.1.1 was tagged but not published.
 
 - The Contributor License Agreement names no court that hears disputes.
 - `publish.yml` publishes releases on PyPI by trusted publishing; it can also
