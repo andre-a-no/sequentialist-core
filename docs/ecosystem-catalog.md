@@ -14,7 +14,7 @@ contains reusable software engineering and application software.
 | [sequentialist-core](https://github.com/andre-a-no/sequentialist-core) | Engineering | Application specs, durable tasks, storage, replay, audit and reports |
 | [sequentialist-visuals](https://github.com/andre-a-no/sequentialist-visuals) | Engineering | Standalone read-only HTML/SVG search and event views in the development checkout |
 | [sequentialist-search](https://github.com/andre-a-no/sequentialist-search) | Engineering, reserved | No implementation yet; the responsibility of a future search application wrapper remains a design decision |
-| [sequentialist-agentic](https://github.com/andre-a-no/sequentialist-agentic) | Application | Tool-agent example, cited retrieval and trusted-rule geometry example; new reasoning needs a compatible development checkout |
+| [sequentialist-agentic](https://github.com/andre-a-no/sequentialist-agentic) | Application | Tool-agent example, cited retrieval and trusted-rule geometry example; reasoning dependency pins the tested search commit |
 | [sequentialist-ab](https://github.com/andre-a-no/sequentialist-ab) | Application | Experiment assignment, sequential A/B analysis and audited decisions |
 | [sequentialist-quality](https://github.com/andre-a-no/sequentialist-quality) | Application | Sequential acceptance sampling, inspection schemes and disposition records |
 | [sequentialist-monitor](https://github.com/andre-a-no/sequentialist-monitor) | Application | Advisory equipment/process monitoring and alarm management; no automatic process control claim |

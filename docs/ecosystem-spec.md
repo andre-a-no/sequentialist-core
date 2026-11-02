@@ -391,9 +391,9 @@ Current baseline in this workspace:
   (forward, backward and checked bidirectional); 113 tests pass. Reasoning-state
   persistence and whole-search alpha allocation are not implemented.
 - agentic has a limited tool-agent example, a trusted-rule geometry task and
-  cited finite-source retrieval; 8 application tests pass. Reasoning uses the
-  development search checkout; the older pinned dependency needs a coordinated
-  release update. No calibrated LLM evidence generator is claimed.
+  cited finite-source retrieval; 8 application tests pass. The agentic PR pins the
+  tested search reasoning/checkpoint commit; a local checkout override remains
+  available for development. No calibrated LLM evidence generator is claimed.
 - visuals renders standalone HTML/SVG search graphs and event timelines without
   modifying inputs or inferring guarantees; 23 tests pass.
 - games has explicit-state/noise model and policy contracts and pure reference
