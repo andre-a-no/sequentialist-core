@@ -1,0 +1,28 @@
+# sequentialist-core
+
+> Reusable engineering for checkpointed, auditable applications of sequential statistics.
+
+## Understand the library
+
+- [Ecosystem catalog](docs/ecosystem-catalog.md) / [Каталог экосистемы](docs/ecosystem-catalog.ru.md): package selection and current status.
+- [Unified technical specification](docs/ecosystem-spec.md): architecture, acceptance cases and delivery stages.
+- [AI discovery](docs/ai-discovery.md) / [Документация для AI](docs/ai-discovery.ru.md): coding context, retrieval and publication boundaries.
+- [Plain-language overview](docs/overview.md): use cases, inputs, outputs, limitations and FAQ.
+- [Обзор на русском](docs/overview.ru.md): применение, входы и выходы, ограничения и частые вопросы.
+- [README](README.md): Handler example, supported modules and engineering guarantees.
+- [Package manifest](pyproject.toml): dependency and Python-version requirements.
+
+## Inspect implementation
+
+- [Engine](src/sequentialist/core/engine.py): record intake, tasks and recovery.
+- [Storage](src/sequentialist/core/storage): supported backends and locking.
+- [Audit](src/sequentialist/core/audit.py): decision lineage and verification.
+- [Reports](src/sequentialist/core/report.py): findings with explicit guarantees.
+- [Tests](tests): executable behavioral evidence.
+
+## Work on the repository
+
+- [Agent navigation](AGENTS.md): source map and development commands.
+- [Owner guidance](CLAUDE.md): existing repository requirements.
+- [Contributing](CONTRIBUTING.md): development and contribution terms.
+- [License](LICENSE) and [commercial terms](COMMERCIAL.md).
