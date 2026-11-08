@@ -1,26 +1,82 @@
 # sequentialist-core
 
-The common layer of the sequentialist libraries: applications of sequential
-statistics built on
-[sequential-analysis](https://github.com/andre-a-no/sequential-analysis).
-The statistics live in sequential-analysis; this package turns its
-procedures into applications that run for months, survive crashes and can
-be audited, and every conclusion they report names its guarantee
-(`exact`, `asymptotic`, `model`, `approximate` or `none`), as the procedure
-behind it states it.
+Reusable software engineering for the Sequentialist ecosystem. The current
+engine turns `sequential-analysis` procedures into durable application tasks
+with storage, recovery, audit and reports. Every reported conclusion names the
+guarantee declared by its underlying procedure.
 
-| Library | Repository | Status |
+## Conceptual framework: the Sequentialist ecosystem
+
+The ecosystem studies sequential decisions: observations arrive, evidence
+changes, and a policy chooses whether to continue, act, wait or stop. It separates
+three questions within the mathematical and cybernetic methods layer:
+
+| Library | Central question | Responsibility |
 |---|---|---|
-| `sequentialist-core` | this one | 0.1.2: specs, the checkpointed engine, storage, audit log, reports, simulations |
-| `sequentialist-ab`, `@sequentialist/ab-client` (npm) | [sequentialist-ab](https://github.com/andre-a-no/sequentialist-ab) | 0.1.0: the engine of an A/B testing platform |
-| `sequentialist-quality` | [sequentialist-quality](https://github.com/andre-a-no/sequentialist-quality) | 0.1.0: sequential acceptance sampling of lots |
-| `sequentialist-monitor` | [sequentialist-monitor](https://github.com/andre-a-no/sequentialist-monitor) | planned: equipment, processes and energy |
-| `sequentialist-markets` | [sequentialist-markets](https://github.com/andre-a-no/sequentialist-markets) | planned: risk, backtests, strategy decay |
-| `sequentialist-clinical` | [sequentialist-clinical](https://github.com/andre-a-no/sequentialist-clinical) | planned: trials, drug safety, quality of care |
-| `sequentialist-release`, `sequentialist-mlops` | | planned: canary releases, models in production |
+| [sequential-analysis](https://github.com/andre-a-no/sequential-analysis) | What can we infer from the observations available so far? | Statistical tests, estimation, filtering, prediction and procedure-specific uncertainty guarantees. |
+| [sequential-search](https://github.com/andre-a-no/sequential-search) | Which step should we explore next to reach an answer or a goal? | Search and reasoning over alternatives, experiments and rules, with explicit evidence, provenance and resource costs. |
+| [sequential-games](https://github.com/andre-a-no/sequential-games) | How do participants pursue their own goals while their actions change a shared environment? | Interaction models for cooperation, competition and partially aligned interests, including asynchronous actions, local information and deliberate waiting. |
 
-The libraries are installed separately and share the `sequentialist`
-namespace. None is on PyPI yet.
+These are complementary responsibilities. A participant's policy can use search
+to plan and statistical analysis to interpret observations; other participants
+continue to act according to their own objectives. This describes how the
+methods can be composed. Each package's implementation status is stated
+separately below.
+
+The naming convention expresses a further separation into three layers:
+
+| Layer | Packages | Responsibility |
+|---|---|---|
+| Mathematical and cybernetic methods | `sequential-*`: analysis, search, games | Models, algorithms, explicit state and the assumptions under which a result holds. |
+| Reusable engineering platform | `sequentialist-*`, including [core](https://github.com/andre-a-no/sequentialist-core) and [visuals](https://github.com/andre-a-no/sequentialist-visuals) | Durable application execution, storage, recovery, audit and presentation, according to each package's implemented scope. |
+| Domain applications | `sequentialist-*`, including [ab](https://github.com/andre-a-no/sequentialist-ab), [quality](https://github.com/andre-a-no/sequentialist-quality), [monitor](https://github.com/andre-a-no/sequentialist-monitor), [clinical](https://github.com/andre-a-no/sequentialist-clinical) and [agentic](https://github.com/andre-a-no/sequentialist-agentic) | Subject-specific goals, workflows, adapters and user-facing decisions built from the methods and engineering components they need. |
+
+Both the engineering platform and applications use the `sequentialist-*`
+prefix. The platform is an open family of reusable packages; `core` currently
+provides durable tasks built around `sequential-analysis` runs. This organization
+does not imply that every combination already has an integration.
+
+Across the ecosystem, state, information available to a decision, randomness,
+costs and stopping reasons should be explicit. Evidence, resource expenditure
+and real-world effects have separate meanings. Statistical validity, derivability
+under supplied rules, properties of an interaction model and reliable execution
+each require their own justification; a guarantee in one layer does not
+automatically establish a guarantee in another.
+
+### This package's role
+
+**Layer: reusable engineering platform.** Core owns durable application tasks,
+journaled intake, checkpoints, storage, audit and reports. Its current engine
+executes `sequential-analysis` runs through domain handlers. Statistical methods
+stay in `sequential-analysis`; domain decisions stay in application handlers.
+Search/game integration requires an explicit adapter. Other reusable engineering
+packages, such as visuals, can have their own interfaces and dependencies.
+
+## Package map
+
+This table describes repository source status, not release or deployment status.
+
+| Package | Layer | Current source scope |
+|---|---|---|
+| [sequentialist-core](https://github.com/andre-a-no/sequentialist-core) | Engineering | Durable tasks, storage, audit and reports |
+| [sequentialist-visuals](https://github.com/andre-a-no/sequentialist-visuals) | Engineering | Portable search/event views in its development branch |
+| [sequentialist-search](https://github.com/andre-a-no/sequentialist-search) | Engineering, proposed | Planning only; exact responsibilities remain open |
+| [sequentialist-ab](https://github.com/andre-a-no/sequentialist-ab) | Application | A/B experiments; the repository also contains the TypeScript assignment client |
+| [sequentialist-quality](https://github.com/andre-a-no/sequentialist-quality) | Application | Sequential lot inspection and sampling schemes |
+| [sequentialist-monitor](https://github.com/andre-a-no/sequentialist-monitor) | Application | Advisory process/equipment monitoring and alarm management |
+| [sequentialist-clinical](https://github.com/andre-a-no/sequentialist-clinical) | Application | Interim trial monitoring and committee reports |
+| [sequentialist-agentic](https://github.com/andre-a-no/sequentialist-agentic) | Application | Tool-agent baseline; finite reasoning/retrieval examples in its development branch |
+| [sequentialist-markets](https://github.com/andre-a-no/sequentialist-markets) | Application, proposed | Planning only; no implemented market/risk package |
+
+The [ecosystem catalog](docs/ecosystem-catalog.md) provides further context.
+Additional names mentioned in plans, including `release`, `mlops`,
+`messengers` and `connectors`, are proposals rather than implementation claims.
+
+## Installation
+
+Packages have their own dependencies, Python requirements and release status;
+check the selected package and revision. Core and the established domain
+libraries use the open `sequentialist` namespace.
 
 ```
 pip install sequentialist-core            # Python 3.8+, depends only on sequential-analysis
