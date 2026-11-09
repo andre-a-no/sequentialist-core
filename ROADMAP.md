@@ -138,13 +138,19 @@ commit is not labelled a published release until publication is verified.
 
 ### C01 — validate commands and define invalid-input behavior
 
+**Progress (unreleased):** the command preflight portion is implemented by
+`Handler.check_command`; see [the contract](README.md#validate-commands-before-accepting-them)
+and `CommandValidationTest` in [the recovery tests](tests/test_engine.py).
+Application handlers must opt in. The broader invalid-observation policy work
+below remains open; C01 as a whole is not complete.
+
 **Owner:** core; domain validators stay in handlers.
 
-The engine validates command name/JSON/actor/reason before journaling, but domain
-argument validation occurs in `on_command` afterwards. Add an optional,
-side-effect-free pre-journal validation contract so an invalid command cannot
-leave a permanently failing replay. Make each stream's invalid-observation policy
-explicit and persisted; distinguish rejection, recorded skip and task failure.
+At the audit baseline, domain argument validation happened in `on_command`,
+after journaling. The new optional, side-effect-free check lets handlers refuse
+invalid commands before acceptance. Remaining work: adopt domain checks in the
+applications and make each stream's invalid-observation policy explicit and
+persisted; distinguish rejection, recorded skip and task failure.
 
 **Done when:** invalid domain arguments leave a usable task and do not enter its
 accepted-command replay; accepted commands replay identically; rejected-input

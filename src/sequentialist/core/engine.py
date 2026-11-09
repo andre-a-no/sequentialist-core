@@ -138,6 +138,18 @@ class Handler(ABC):
     def on_time(self, time: float, ctx: Context) -> None:  # noqa: B027 - optional
         """The watermark moved to `time`."""
 
+    def check_command(self, command: Command) -> str | None:
+        """Return a refusal reason, or None to accept a new command before it is journaled.
+
+        This optional check may read the handler's current state, but must not
+        mutate it or the command, perform I/O, or use time or randomness. The
+        engine has already checked the command name and plain JSON envelope.
+        It raises TaskError on refusal without changing the task or its journal.
+        Accepted commands are replayed through on_command without this check.
+        The default accepts commands, preserving existing handlers' behavior.
+        """
+        return None
+
     def on_command(self, command: Command, ctx: Context) -> None:
         raise TaskError(f"unknown command {command.name!r}")
 
@@ -328,13 +340,16 @@ class Task:
         return self._process([("tick", time)], IngestResult())
 
     def command(self, name: str, args: Mapping[str, Any] | None = None, *, actor: str, reason: str) -> IngestResult:
-        """An action of a person; the handler records it in the audit log with the actor and the reason."""
+        """Validate and journal a person's action; the handler records its actor and reason in the audit log."""
         self._usable()
         command = Command(name, dict(args or {}), actor, reason)
         if name not in self.handler.commands:
             raise TaskError(f"unknown command {name!r}; this task accepts {sorted(self.handler.commands)}")
         if not (actor and reason and is_plain(command.to_json())):
             raise InvalidRecord("a command needs an actor, a reason and plain JSON arguments")
+        problem = self.handler.check_command(command)
+        if problem is not None:
+            raise TaskError(f"command {name!r} refused: {problem}")
         # numbered, so that a replay never applies a command twice (records are deduplicated by their seq)
         self._storage.journal_append(self.task_id, [{"command": command.to_json(), "n": self.counters["commands"]}])
         return self._process([("command", command)], IngestResult())
