@@ -69,6 +69,9 @@ This table describes repository source status, not release or deployment status.
 | [sequentialist-markets](https://github.com/andre-a-no/sequentialist-markets) | Application, proposed | Planning only; no implemented market/risk package |
 
 The [ecosystem catalog](docs/ecosystem-catalog.md) provides further context.
+The [development roadmap](ROADMAP.md) / [план развития](ROADMAP.ru.md) records
+the audited gaps across all twelve repositories, priorities, dependencies and
+acceptance criteria. Planned work is distinguished from implemented capabilities.
 Additional names mentioned in plans, including `release`, `mlops`,
 `messengers` and `connectors`, are proposals rather than implementation claims.
 
