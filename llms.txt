@@ -4,6 +4,8 @@
 
 ## Understand the library
 
+- [Development roadmap](ROADMAP.md) / [План развития](ROADMAP.ru.md): audited gaps, priorities, dependencies and completion criteria across the ecosystem.
+
 - [Ecosystem catalog](docs/ecosystem-catalog.md) / [Каталог экосистемы](docs/ecosystem-catalog.ru.md): package selection and current status.
 - [Unified technical specification](docs/ecosystem-spec.md): architecture, acceptance cases and delivery stages.
 - [AI discovery](docs/ai-discovery.md) / [Документация для AI](docs/ai-discovery.ru.md): coding context, retrieval and publication boundaries.
