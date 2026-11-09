@@ -63,6 +63,142 @@ class StorageCases:
         return made
 
 
+class CheckedWatch(Watch):
+    """A domain command that changes state only after validating its arguments."""
+
+    commands = ("set_paused",)
+
+    def check_command(self, command):
+        if set(command.args) != {"paused"} or type(command.args["paused"]) is not bool:
+            return "paused must be a boolean and the only argument"
+        if command.args["paused"] == self.paused:
+            return "the task is already in that state"
+        return None
+
+    def on_command(self, command, ctx):
+        paused = command.args["paused"]
+        if type(paused) is not bool:
+            raise TaskError("paused must be a boolean")
+        self.paused = paused
+        ctx.record("action", "paused" if paused else "resumed", actor=command.actor, reason=command.reason)
+
+
+class CommandValidationTest(StorageCases, unittest.TestCase):
+    def test_refusal_leaves_pending_work_and_storage_unchanged(self):
+        for name, storage in self.storages().items():
+            with self.subTest(storage=name):
+                engine = Engine(storage, clock="event", checkpoint_every=10**6)
+                task = engine.create("w", KIND, SPEC, CheckedWatch(SPEC))
+                self.addCleanup(task.close)
+                task.ingest(records([0.1, 0.2]))
+                before = snapshot(task)
+                stored = storage.load("w")
+                journal = storage.journal_read("w")
+                self.assertTrue(journal)  # rejection must not clear pending accepted records
+                notified = []
+                engine.sinks.append(notified.append)
+                for args, problem in (({}, "paused must be"), ({"paused": "yes"}, "paused must be"),
+                                      ({"paused": True, "extra": 1}, "paused must be"),
+                                      ({"paused": False}, "already in that state")):
+                    with self.subTest(args=args), self.assertRaisesRegex(TaskError, problem):
+                        task.command("set_paused", args, actor="alice", reason="maintenance")
+                    self.assertIsNone(task.failed)
+                    self.assertEqual(snapshot(task), before)
+                    self.assertEqual(storage.load("w"), stored)
+                    self.assertEqual(storage.journal_read("w"), journal)
+                    self.assertEqual(notified, [])
+                # Accepted work still proceeds, and rejected commands have consumed no counter.
+                task.ingest(records([0.1], start=2))
+                task.command("set_paused", {"paused": True}, actor="alice", reason="maintenance")
+                self.assertTrue(task.handler.paused)
+                self.assertEqual(task.handler.seen, 3)
+                self.assertEqual(task.counters["commands"], 1)
+                expected = snapshot(task)
+                task.close()
+                restored = engine.open("w", CheckedWatch)
+                self.addCleanup(restored.close)
+                self.assertEqual(snapshot(restored), expected)
+
+    def test_rejected_command_does_not_poison_recovery_after_a_crash(self):
+        for name, storage in self.storages().items():
+            with self.subTest(storage=name):
+                engine = Engine(storage, clock="event", checkpoint_every=10**6)
+                task = engine.create("w", KIND, SPEC, CheckedWatch(SPEC))
+                self.addCleanup(task.close)
+                task.ingest(records([0.1, 0.2]))
+                expected = snapshot(task)
+                with self.assertRaisesRegex(TaskError, "paused must be"):
+                    task.command("set_paused", {"paused": "yes"}, actor="alice", reason="maintenance")
+                crash(task)
+                restored = engine.open("w", CheckedWatch)
+                self.addCleanup(restored.close)
+                self.assertEqual(snapshot(restored), expected)
+                restored.command("set_paused", {"paused": True}, actor="alice", reason="maintenance")
+                self.assertEqual(restored.counters["commands"], 1)
+
+    def test_preflight_uses_restored_domain_state(self):
+        for name, storage in self.storages().items():
+            with self.subTest(storage=name):
+                engine = Engine(storage, clock="event")
+                task = engine.create("w", KIND, SPEC, CheckedWatch(SPEC))
+                task.command("set_paused", {"paused": True}, actor="alice", reason="maintenance")
+                task.close()
+                task = engine.open("w", CheckedWatch)
+                self.addCleanup(task.close)
+                before = snapshot(task)
+                with self.assertRaisesRegex(TaskError, "already in that state"):
+                    task.command("set_paused", {"paused": True}, actor="bob", reason="duplicate request")
+                self.assertEqual(snapshot(task), before)
+                task.command("set_paused", {"paused": False}, actor="bob", reason="maintenance finished")
+                self.assertFalse(task.handler.paused)
+                self.assertEqual(task.counters["commands"], 2)
+
+    def test_accepted_commands_replay_without_preflight(self):
+        class ReplayWatch(CheckedWatch):
+            def check_command(self, command):
+                raise AssertionError("accepted commands must not be validated again on replay")
+
+        for name, storage in self.storages().items():
+            with self.subTest(storage=name):
+                engine = Engine(storage, clock="event", checkpoint_every=10**6)
+                task = engine.create("w", KIND, SPEC, CheckedWatch(SPEC))
+                task.checkpoint = lambda: None  # accepted command and audit survive, checkpoint does not
+                task.ingest(records([0.1, 0.2]))
+                task.command("set_paused", {"paused": True}, actor="alice", reason="maintenance")
+                task.ingest(records([0.3], start=2))  # ignored by the paused handler
+                expected = snapshot(task)
+                self.assertTrue(any("command" in item for item in storage.journal_read("w")))
+                crash(task)
+                restored = engine.open("w", ReplayWatch)
+                self.addCleanup(restored.close)
+                self.assertEqual(snapshot(restored), expected)
+                self.assertEqual([e.kind for e in restored.audit()].count("action"), 1)
+
+    def test_envelope_validation_precedes_preflight_and_hook_errors_are_not_journaled(self):
+        class BrokenCheck(CheckedWatch):
+            def check_command(self, command):
+                raise ValueError("validator unavailable")
+
+        storage = MemoryStorage()
+        task = Engine(storage, clock="event").create("w", KIND, SPEC, BrokenCheck(SPEC))
+        self.addCleanup(task.close)
+        before = snapshot(task)
+        with self.assertRaisesRegex(TaskError, "unknown command"):
+            task.command("unknown", actor="alice", reason="maintenance")
+        for args, actor, reason in (({"paused": True}, "", "maintenance"),
+                                    ({"paused": True}, "alice", ""),
+                                    ({"paused": float("nan")}, "alice", "maintenance")):
+            with self.subTest(args=args, actor=actor, reason=reason), self.assertRaises(InvalidRecord):
+                task.command("set_paused", args, actor=actor, reason=reason)
+        with self.assertRaisesRegex(ValueError, "validator unavailable"):
+            task.command("set_paused", {"paused": True}, actor="alice", reason="maintenance")
+        self.assertIsNone(task.failed)
+        self.assertEqual(snapshot(task), before)
+        self.assertEqual(storage.journal_read("w"), [])
+        task.ingest(records([0.1]))
+        self.assertEqual(task.handler.seen, 1)
+
+
 class RecoveryTest(StorageCases, unittest.TestCase):
     def uninterrupted(self, data):
         engine = Engine(MemoryStorage(), clock="event")

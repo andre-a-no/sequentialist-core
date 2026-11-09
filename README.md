@@ -129,6 +129,37 @@ task = engine.open("line-3", Watch)       # restores the checkpoint, replays the
 STORAGE TASK` verifies and prints a task's audit log. Installed libraries
 add their own subcommands.
 
+### Validate commands before accepting them
+
+A handler can override `check_command(command) -> str | None`: return `None`
+to accept, or a reason to refuse. The engine calls it after checking the command
+name, actor, reason and JSON arguments, **before** writing to the journal or
+calling `on_command`. A refusal raises `TaskError` and leaves the task usable;
+it does not change its counters, checkpoint or audit log, or notify sinks.
+
+For example, a handler with a `set_paused` command and a persisted `paused` flag
+can validate both arguments and current state:
+
+```python
+def check_command(self, command):
+    if set(command.args) != {"paused"} or type(command.args["paused"]) is not bool:
+        return "paused must be a boolean and the only argument"
+    if command.args["paused"] == self.paused:
+        return "the task is already in that state"
+    return None
+```
+
+The check must be deterministic and read-only: no changes to the handler or
+command, I/O, wall clock or randomness. `on_command` performs the accepted
+action and records its audit entry. If the check itself raises an exception,
+that exception propagates before any command is journaled.
+
+Recovery applies already accepted commands through `on_command` without running
+the check again. The default check accepts commands so existing handlers remain
+compatible; applications must opt in to validate their domain arguments and
+state. This does not repair invalid commands already in an old journal, or
+provide rollback for failures inside `on_command`.
+
 **Limits of this version.** The whole state of a task is written at every
 checkpoint, so its size (and the cost of a checkpoint) grows with what the
 handler keeps; the A/B handler keeps one entry per unit. Locks protect a

@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased
+
+- Add optional `Handler.check_command(command) -> str | None` for domain
+  validation before journaling. Refusals raise `TaskError` without failing the
+  task or consuming a command number. Existing handlers accept commands by
+  default; accepted journal entries replay without the preflight check.
+- Cover refused arguments and state, validator exceptions, continued intake and
+  crash recovery on memory, file and SQLite storage. No checkpoint format change.
+
 ## sequentialist-core 0.1.2 — 2026-10-29
 
 The first version published on PyPI. The code of the package is that of
